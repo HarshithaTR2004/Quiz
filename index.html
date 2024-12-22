@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PersonaMapper</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    #quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #result-container {
+      display: none;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="quiz-container">
+    <h1>PersonaMapper</h1>
+    <p id="question-text"></p>
+    <div id="options-container"></div>
+    <button id="next-button" style="display: none;">Next</button>
+    <div id="result-container">
+      <h2>Quiz Result</h2>
+      <p id="result-role"></p>
+      <canvas id="result-chart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: '1. How do you approach a new project?',
+        options: [
+         
+          { text: 'Engage with others to brainstorm and discuss ideas.', role: 'Social Butterfly' },
+          { text: 'Break down the project into manageable tasks.', role: 'Analyst' },
+          { text: 'Look for innovative approaches and new ideas.', role: 'Creative Thinker' },
+          { text: 'Offer help and make sure the team works together.', role: 'Supporter' },
+          { text: 'Focus on delivering results quickly.', role: 'Go-Getter' },
+          { text: 'Challenge assumptions and look for better ways.', role: 'Challenger' },
+          { text: 'Take charge and set clear goals.', role: 'Leader' },
+          { text: 'Work alone and focus on individual tasks.', role: 'The Loner' },
+          
+        ],
+      },
+      {
+        question: '2. How do you handle conflict in a group?',
+        options: [
+          { text: 'Mediate and ensure a resolution is found.', role: 'Leader' },
+          { text: 'Take charge and push for a quick resolution.', role: 'Go-Getter' },
+          { text: 'Find creative ways to resolve the issue.', role: 'Creative Thinker' },
+          { text: 'Analyze the situation logically and suggest solutions.', role: 'Analyst' },
+          { text: 'Challenge the status quo and push for change.', role: 'Challenger' },
+          { text: 'Avoid conflict and work alone to solve problems.', role: 'The Loner' },
+          { text: 'Use communication and collaboration to bring everyone together.', role: 'Social Butterfly' }
+        ],
+      },
+      {
+        question: '3. What motivates you in a team environment?',
+        options: [
+          
+          
+          { text: 'Creating new ideas and thinking outside the box.', role: 'Creative Thinker' },
+          { text: 'Being in charge and setting direction.', role: 'Leader' },
+          { text: 'Helping others and ensuring team cohesion.', role: 'Supporter' },
+          { text: 'Achieving goals and making progress quickly.', role: 'Go-Getter' },
+          { text: 'Improving processes and challenging norms.', role: 'Challenger' },
+          { text: 'Building relationships and fostering collaboration.', role: 'Social Butterfly' },
+          { text: 'Working alone and focusing on my tasks.', role: 'The Loner' },
+          { text: 'Solving problems and finding solutions.', role: 'Analyst' },
+          
+        ],
+      },
+      {
+        question: '4. How do you approach decision-making in a group?',
+        options: [
+        { text: 'Prefer to make decisions independently.', role: 'The Loner' },
+          { text: 'Make decisions quickly and decisively.', role: 'Go-Getter' },
+          { text: 'Challenge ideas and suggest better alternatives.', role: 'Challenger' },
+          { text: 'Analyze data and make decisions based on facts.', role: 'Analyst' },
+          { text: 'Consider creative alternatives and innovative solutions.', role: 'Creative Thinker' },
+          { text: 'Make sure everyone’s opinion is heard before making a decision.', role: 'Supporter' },
+          { text: 'Take charge and make decisions confidently.', role: 'Leader' },
+          { text: 'Encourage collaboration and team input before deciding.', role: 'Social Butterfly' }
+        ],
+      },
+      {
+        question: '5. How do you handle multiple tasks at once?',
+        options: [
+          
+          { text: 'Look for opportunities to improve processes as you work.', role: 'Challenger' },
+          { text: 'Organize tasks and focus on completing them one at a time.', role: 'Analyst' },
+          { text: 'Collaborate with others to complete tasks together.', role: 'Social Butterfly' },
+          { text: 'Help others with their tasks while managing your own.', role: 'Supporter' },
+          { text: 'Tackle tasks quickly and efficiently.', role: 'Go-Getter' },
+          { text: 'Delegate tasks to others and oversee progress.', role: 'Leader' },
+          { text: 'Prefer to work on one task at a time to avoid mistakes.', role: 'The Loner' },
+          { text: 'Think of innovative ways to tackle multiple tasks simultaneously.', role: 'Creative Thinker' },
+          
+        ],
+      },
+      {
+        question: '6. How do you react when a project faces challenges?',
+        options: [
+          { text: 'Take charge and look for solutions.', role: 'Leader' },
+          { text: 'Support the team and help keep everyone motivated.', role: 'Supporter' },
+          { text: 'Analyze the situation and come up with a detailed plan.', role: 'Analyst' },
+          { text: 'Withdraw and focus on individual tasks until the challenge is resolved.', role: 'The Loner' },
+          { text: 'Find creative solutions and think outside the box.', role: 'Creative Thinker' },
+          { text: 'Push through the challenges and keep the team moving forward.', role: 'Go-Getter' },
+          { text: 'Engage with others to brainstorm solutions and keep the team positive.', role: 'Social Butterfly' },
+          { text: 'Question assumptions and find better ways to handle the challenge.', role: 'Challenger' },
+        ],
+      },
+      {
+        question: '7. What role do you typically take in group discussions?',
+        options: [
+          
+          { text: 'Analyze and offer data-driven insights.', role: 'Analyst' },
+         
+          { text: 'Challenge ideas and push for better solutions.', role: 'Challenger' },
+          { text: 'Listen quietly and focus on my thoughts.', role: 'The Loner' },
+          { text: 'Take the lead and guide the conversation.', role: 'Leader' },
+          { text: 'Focus on moving the discussion forward and achieving results.', role: 'Go-Getter' },
+          { text: 'Encourage everyone to share their thoughts and collaborate.', role: 'Social Butterfly' },
+          { text: 'Suggest creative ideas and new approaches.', role: 'Creative Thinker' },
+          { text: 'Ensure that everyone is heard and respected.', role: 'Supporter' },
+        ],
+      },
+      {
+        question: '8. How do you handle feedback from others?',
+        options: [
+          { text: 'Use it to improve and grow in my role.', role: 'Leader' },
+          { text: 'Challenge the feedback and look for ways to improve further.', role: 'Challenger' },
+          { text: 'Look for creative ways to implement the feedback.', role: 'Creative Thinker' },
+          { text: 'Take it constructively and use it to help the team.', role: 'Supporter' },
+          { text: 'Use it to achieve better results quickly.', role: 'Go-Getter' },
+          { text: 'Analyze the feedback and adjust my approach accordingly.', role: 'Analyst' },
+          { text: 'Prefer to handle feedback on my own without outside help.', role: 'The Loner' },
+          { text: 'Share the feedback with the team and collaborate on improvements.', role: 'Social Butterfly' }
+        ],
+      },
+      {
+        question: '9. How do you prioritize tasks in a project?',
+        options: [
+          
+          { text: 'Evaluate tasks and create a plan to tackle them methodically.', role: 'Analyst' },
+          { text: 'Think creatively about the most efficient approach.', role: 'Creative Thinker' },
+          { text: 'Ensure all tasks are equally prioritized and balanced.', role: 'Supporter' },
+          { text: 'Focus on completing one task at a time with attention to detail.', role: 'The Loner' },
+          { text: 'Tackle the most urgent tasks first and move quickly.', role: 'Go-Getter' },
+          { text: 'Challenge the current priorities and look for better ways.', role: 'Challenger' },
+          { text: 'Collaborate with others to determine priority tasks.', role: 'Social Butterfly' },
+          { text: 'Delegate tasks based on team members’ strengths.', role: 'Leader' },
+        ],
+      },
+      {
+        question: '10. How do you handle change in a team environment?',
+        options: [
+          { text: 'Lead the team through the change and set a clear direction.', role: 'Leader' },
+          { text: 'Encourage the team to collaborate and embrace the change together.', role: 'Social Butterfly' },
+          { text: 'Resist change and prefer to work in a familiar environment.', role: 'The Loner' },
+          { text: 'Adapt creatively and find new solutions to overcome challenges.', role: 'Creative Thinker' },
+          { text: 'Analyze the impact of change and adjust strategies accordingly.', role: 'Analyst' },
+          { text: 'Support the team during the transition and ensure smooth communication.', role: 'Supporter' },
+          { text: 'Adapt quickly and push the team to keep up with change.', role: 'Go-Getter' },
+          { text: 'Challenge the change and push for better alternatives.', role: 'Challenger' },
+          
+          
+        ],
+      },
+      
+  {
+    question: '11. How do you handle tight deadlines?',
+    options: [
+      
+      { text: 'Break the task down into smaller chunks and tackle them one by one.', role: 'Analyst' },
+      { text: 'Look for innovative shortcuts or ways to speed up the process.', role: 'Creative Thinker' },
+      { text: 'Work at my own pace and avoid rushing.', role: 'The Loner' },
+      { text: 'Collaborate with the team to ensure everyone meets the deadline.', role: 'Social Butterfly' },
+      { text: 'Take charge and organize the team to meet the deadline.', role: 'Leader' },
+      { text: 'Support others and help them stay on track to meet the deadline.', role: 'Supporter' },
+      { text: 'Push through the pressure and work as quickly as possible.', role: 'Go-Getter' },
+      { text: 'Challenge unrealistic deadlines and look for ways to extend them.', role: 'Challenger' },
+     
+    ],
+  },
+  {
+    question: '12. How do you handle a lack of resources for a project?',
+    options: [
+      { text: 'Find ways to make the most of the available resources.', role: 'Leader' },
+      { text: 'Analyze the situation and find practical solutions.', role: 'Analyst' },
+      { text: 'Find alternative ways to get things done without delay.', role: 'Go-Getter' },
+      { text: 'Challenge the constraints and look for better resources.', role: 'Challenger' },
+      { text: 'Think creatively about how to work around the lack of resources.', role: 'Creative Thinker' },
+      { text: 'Support the team and keep morale high despite the lack of resources.', role: 'Supporter' },
+      { text: 'Work alone and adapt to the situation without relying on others.', role: 'The Loner' },
+      { text: 'Collaborate with others to maximize the available resources.', role: 'Social Butterfly' }
+    ],
+  },
+  {
+    question: '13. How do you deal with repetitive tasks?',
+    options: [
+      { text: 'Delegate repetitive tasks to others while focusing on bigger issues.', role: 'Leader' },
+      { text: 'Challenge the need for repetitive tasks and propose alternatives.', role: 'Challenger' },
+      { text: 'Break down the repetitive tasks into manageable steps.', role: 'Analyst' },
+      { text: 'Look for ways to make repetitive tasks more efficient or interesting.', role: 'Creative Thinker' },
+      { text: 'Help others with repetitive tasks and ensure teamwork.', role: 'Supporter' },
+      { text: 'Push through repetitive tasks and complete them quickly.', role: 'Go-Getter' },
+      
+      { text: 'Work through repetitive tasks with focus and patience.', role: 'The Loner' },
+      { text: 'Collaborate with others to share the burden of repetitive tasks.', role: 'Social Butterfly' }
+    ],
+  },
+  {
+    question: '14. How do you handle high-pressure situations?',
+    options: [
+      
+      { text: 'Analyze the situation calmly and methodically to find a solution.', role: 'Analyst' },
+      { text: 'Challenge the factors creating pressure and look for ways to eliminate them.', role: 'Challenger' },
+      { text: 'Look for creative ways to reduce the pressure and simplify the situation.', role: 'Creative Thinker' },
+      { text: 'Support the team by providing emotional reassurance and staying calm.', role: 'Supporter' },
+      { text: 'Push forward with determination and keep the team moving under pressure.', role: 'Go-Getter' },
+      { text: 'Take charge and make quick decisions to guide the team.', role: 'Leader' },
+      { text: 'Withdraw and focus on my individual tasks to manage stress.', role: 'The Loner' },
+      { text: 'Engage with others to collaboratively tackle the pressure.', role: 'Social Butterfly' }
+    ],
+  },
+  {
+    question: '15. How do you motivate yourself during long projects?',
+    options: [
+      { text: 'Set clear milestones and celebrate progress along the way.', role: 'Leader' },
+      
+      { text: 'Look for new ideas and challenges to keep the project interesting.', role: 'Creative Thinker' },
+      { text: 'Work at my own pace, focusing on individual accomplishments.', role: 'The Loner' },
+      { text: 'Stay focused on helping others and maintaining team harmony.', role: 'Supporter' },
+      { text: 'Keep pushing forward and focus on the end goal.', role: 'Go-Getter' },
+      { text: 'Challenge myself to improve and seek continuous growth.', role: 'Challenger' },
+      
+      { text: 'Engage with others to stay motivated and share progress.', role: 'Social Butterfly' },
+      { text: 'Analyze the project’s benefits and break it down into smaller tasks.', role: 'Analyst' },
+    ],
+  },
+  {
+    question: '16. How do you handle ambiguity in a project?',
+    options: [
+      
+      { text: 'Analyze the situation and break it down into smaller, clear tasks.', role: 'Analyst' },
+      { text: 'Look for creative ways to clarify and resolve the ambiguity.', role: 'Creative Thinker' },
+      { text: 'Challenge the ambiguity and push for clearer guidelines.', role: 'Challenger' },
+      { text: 'Work independently and seek clarity on my own terms.', role: 'The Loner' },
+      { text: 'Support the team by providing clarity and ensuring everyone is on the same page.', role: 'Supporter' },
+      { text: 'Push forward despite the uncertainty and figure things out as I go.', role: 'Go-Getter' },
+      { text: 'Take charge and set a direction to remove ambiguity.', role: 'Leader' },
+      { text: 'Collaborate with others to find solutions and reduce ambiguity.', role: 'Social Butterfly' }
+    ],
+  },
+  {
+    question: '17. How do you approach learning new skills or tools?',
+    options: [
+      
+      { text: 'Research and analyze the best resources to master the skill efficiently.', role: 'Analyst' },
+      { text: 'Learn quickly and apply the new skill to achieve results immediately.', role: 'Go-Getter' },
+      { text: 'Challenge the tool or skill to understand it better and improve it.', role: 'Challenger' },
+      { text: 'Experiment and think outside the box to find creative ways to learn.', role: 'Creative Thinker' },
+      { text: 'Support others in learning the skill and encourage collaboration.', role: 'Supporter' },
+      { text: 'Lead by example and learn the skill to share it with the team.', role: 'Leader' },
+      { text: 'Prefer to work independently and learn at my own pace.', role: 'The Loner' },
+      { text: 'Engage with others and learn through group activities and discussions.', role: 'Social Butterfly' }
+    ],
+  },
+  {
+    question: '18. How do you handle criticism from others?',
+    options: [
+      { text: 'Use it constructively to improve and lead more effectively.', role: 'Leader' },
+      { text: 'Analyze the feedback and adjust accordingly for better results.', role: 'Analyst' },
+      { text: 'Find ways to use the criticism to fuel creative growth and new ideas.', role: 'Creative Thinker' },
+      { text: 'Challenge the criticism and look for areas of improvement.', role: 'Challenger' },
+      { text: 'Handle it on my own and work through it privately.', role: 'The Loner' },
+      { text: 'Discuss the criticism with others and collaborate on improvements.', role: 'Social Butterfly' },
+      { text: 'Accept it gracefully and use it to help others in the team.', role: 'Supporter' },
+      { text: 'Use it to adjust my approach and deliver results more quickly.', role: 'Go-Getter' },
+    ],
+  },
+  {
+    question: '19. How do you stay organized in a busy environment?',
+    options: [
+      { text: 'Delegate tasks and ensure everyone stays organized.', role: 'Leader' },
+      { text: 'Challenge inefficient processes and implement better systems.', role: 'Challenger' },
+      { text: 'Look for ways to streamline and optimize tasks to stay organized.', role: 'Creative Thinker' },
+      { text: 'Help others stay organized and ensure the team remains coordinated.', role: 'Supporter' },
+      { text: 'Focus on staying efficient and organized to deliver results quickly.', role: 'Go-Getter' },
+     
+      { text: 'Work at my own pace and stay organized in my own way.', role: 'The Loner' },
+      { text: 'Create detailed plans and stay methodical in my approach.', role: 'Analyst' },
+      { text: 'Collaborate with others to keep the work environment organized and smooth.', role: 'Social Butterfly' }
+    ],
+  },
+  {
+    question: '20. How do you manage uncertainty in a project?',
+    options: [
+    { text: 'Push forward despite the uncertainty and keep the momentum going.', role: 'Go-Getter' },
+      { text: 'Analyze the uncertainty and come up with a strategy to manage it.', role: 'Analyst' },
+      { text: 'Think creatively and adapt to the uncertainty by finding new solutions.', role: 'Creative Thinker' },
+      { text: 'Support others and keep the team motivated despite uncertainty.', role: 'Supporter' },
+      { text: 'Challenge the uncertainty and look for ways to eliminate it.', role: 'Challenger' },
+      { text: 'Withdraw from the uncertainty and focus on individual tasks.', role: 'The Loner' },
+      { text: 'Engage with others to brainstorm and reduce uncertainty together.', role: 'Social Butterfly' },
+      { text: 'Lead with confidence and provide a sense of direction to the team.', role: 'Leader' },
+    ],
+  }
+]
+
+      // Add 10 more questions similar to the above...
+      
+   
+
+    let currentQuestionIndex = 0;
+    let answers = [];
+    
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const nextButton = document.getElementById('next-button');
+    const resultContainer = document.getElementById('result-container');
+    const resultRole = document.getElementById('result-role');
+    const resultChart = document.getElementById('result-chart');
+
+    function displayQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionText.innerText = currentQuestion.question;
+      optionsContainer.innerHTML = '';
+      
+      currentQuestion.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.innerText = option.text;
+        button.onclick = () => {
+          answers.push(option.role);
+          nextButton.style.display = 'block';
+        };
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    nextButton.onclick = () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        displayQuestion();
+        nextButton.style.display = 'none';
+      } else {
+        displayResult();
+      }
+    };
+
+    function displayResult() {
+      resultContainer.style.display = 'block';
+      const roleCounts = answers.reduce((acc, role) => {
+        acc[role] = (acc[role] || 0) + 1;
+        return acc;
+      }, {});
+
+      const sortedRoles = Object.entries(roleCounts).sort((a, b) => b[1] - a[1]);
+      const mostCommonRole = sortedRoles[0][0];
+      resultRole.innerText = `Your dominant team role is: ${mostCommonRole}`;
+
+      const chartData = {
+        labels: Object.keys(roleCounts),
+        datasets: [{
+          label: 'Role Distribution',
+          data: Object.values(roleCounts),
+          backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(201, 203, 207, 0.2)', 'rgba(255, 99, 99, 0.2)'],
+          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(201, 203, 207, 1)', 'rgba(255, 99, 99, 1)'],
+          borderWidth: 1
+        }]
+      };
+
+      const chartOptions = {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return `${tooltipItem.label}: ${tooltipItem.raw} votes`;
+              }
+            }
+          }
+        }
+      };
+
+      new Chart(resultChart, {
+        type: 'pie',
+        data: chartData,
+        options: chartOptions
+      });
+    }
+
+    displayQuestion();
+  </script>
+
+</body>
+</html>
