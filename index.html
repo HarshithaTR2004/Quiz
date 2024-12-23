@@ -6,30 +6,128 @@
   <title>PersonaMapper</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #2e2e2e, #1c1c1c); /* Black gradient background */
+  color: #030202; /* Soft light gray text */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  justify-content: center;
+}
 
-    #quiz-container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+#quiz-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, #4b0082, #8a2be2); /* Violet gradient */
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+  color: #000000;
+  text-align: center;
+}
 
-    #result-container {
-      display: none;
-      margin-top: 20px;
-    }
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #d4c3ff; /* Soft violet for headings */
+  margin-bottom: 20px;
+}
 
-    button {
-      padding: 10px;
-      margin: 5px;
-      cursor: pointer;
-    }
+h2 {
+  font-size: 1.8rem;
+  color: #cbb6ff; /* Light violet */
+  margin-bottom: 15px;
+}
 
-    canvas {
-      margin-top: 20px;
-    }
+p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 10px 0;
+  color: #090707; /* Slightly brighter text for clarity */
+}
+
+#question-text {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+#options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+button {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, #9400d3, #7b00b9); /* Vibrant violet gradient */
+  color: #000000; /* White text for contrast */
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #7b00b9, #4b0082); /* Darker violet gradient on hover */
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+button:disabled {
+  background: #555; /* Dark gray for disabled buttons */
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#next-button {
+  margin-top: 25px;
+  align-self: center;
+}
+
+#result-container {
+  display: none;
+  text-align: center;
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #8a2be2, #4b0082); /* Reverse violet gradient */
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+canvas {
+  margin-top: 20px;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  #quiz-container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  button {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -387,8 +485,8 @@
         datasets: [{
           label: 'Role Distribution',
           data: Object.values(roleCounts),
-          backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(201, 203, 207, 0.2)', 'rgba(255, 99, 99, 0.2)'],
-          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(201, 203, 207, 1)', 'rgba(255, 99, 99, 1)'],
+          backgroundColor: ['#3e4444', ' #b9936c', '#eca1a6', '#d5e1df', '#80ced6', '#bc5a45', '#d64161', '#87bdd8'],
+          borderColor: ['#3e4444', ' #b9936c', '#eca1a6', '#d5e1df', '#80ced6', '#bc5a45', '#d64161', '#87bdd8'],
           borderWidth: 1
         }]
       };
